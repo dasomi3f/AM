@@ -3,1025 +3,199 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>인공근육 Lab. 연구방향 History</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet" />
+    <title>인공근육 Lab. 접근</title>
     <style>
-        body {
-            font-family: 'Noto Sans KR', sans-serif;
-            background: #f8fafc;
-            color: #334155;
-            overflow: hidden;
-        }
-
         :root {
-            --header-height: 81px;
+            color-scheme: light;
+            --bg: #0f172a;
+            --card: #111827;
+            --border: #1f2937;
+            --text: #e5e7eb;
+            --muted: #9ca3af;
+            --accent: #14b8a6;
+            --error: #f87171;
         }
-
-        .app-shell {
-            height: calc(100vh - var(--header-height));
-            overflow: hidden;
-        }
-
-        .intro-panel,
-        .phase-panel,
-        .content-panel {
-            position: relative;
-            overflow: hidden;
-            min-height: 0;
-        }
-
-        .intro-scroll,
-        .phase-scroll,
-        .content-scroll {
-            height: 100%;
-            min-height: 0;
-            overflow-y: auto;
-            overscroll-behavior: contain;
-            -webkit-overflow-scrolling: touch;
-            scrollbar-width: none;
-        }
-
-        .intro-scroll::-webkit-scrollbar,
-        .phase-scroll::-webkit-scrollbar,
-        .content-scroll::-webkit-scrollbar {
-            width: 0;
-            height: 0;
-        }
-
-        .intro-scroll {
-            height: auto;
-            overflow: visible;
-        }
-
-        .intro-panel {
-            transition: margin-bottom 0.2s ease;
-        }
-
-        .intro-toggle {
-            display: inline-flex;
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
             align-items: center;
             justify-content: center;
-            width: 2rem;
-            height: 2rem;
-            border-radius: 9999px;
-            border: 1px solid transparent;
-            background: transparent;
-            color: #94a3b8;
-            opacity: 0;
-            transition: all 0.2s ease;
+            background: radial-gradient(circle at 20% 20%, rgba(20,184,166,0.12), transparent 32%),
+                        radial-gradient(circle at 80% 30%, rgba(59,130,246,0.14), transparent 36%),
+                        radial-gradient(circle at 50% 80%, rgba(236,72,153,0.10), transparent 40%),
+                        var(--bg);
+            font-family: 'Noto Sans KR', system-ui, -apple-system, 'Segoe UI', sans-serif;
+            color: var(--text);
         }
-
-        .intro-panel:hover .intro-toggle,
-        .intro-toggle:focus-visible {
-            opacity: 1;
-            border-color: #dbe4e8;
-            background: #ffffff;
-            color: #0f766e;
+        .card {
+            width: min(420px, 92vw);
+            background: linear-gradient(145deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02));
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 24px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.35);
+            backdrop-filter: blur(10px);
         }
-
-        .intro-summary {
+        .header {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            gap: 1rem;
-            padding: 1.15rem 1.5rem 0;
+            gap: 12px;
+            margin-bottom: 14px;
         }
-
-        .intro-content {
-            max-height: 18rem;
-            overflow: hidden;
-            transition: max-height 0.28s ease, opacity 0.2s ease, padding 0.2s ease;
-        }
-
-        .intro-panel.collapsed {
-            margin-bottom: 1rem;
-        }
-
-        .intro-panel.collapsed .intro-content {
-            max-height: 0;
-            opacity: 0;
-        }
-
-        .intro-panel.collapsed .intro-summary {
-            padding: 1rem 1.5rem;
-        }
-
-        .intro-panel.collapsed .intro-summary-copy {
-            color: #64748b;
-        }
-
-        .intro-panel.collapsed .intro-toggle {
-            opacity: 1;
-            border-color: #dbe4e8;
-        }
-
-        .timeline-line {
-            position: absolute;
-            left: 1.25rem;
-            top: 2rem;
-            bottom: 2rem;
-            width: 2px;
-            background: #cbd5e1;
-            z-index: 0;
-        }
-
-        .timeline-node {
-            transition: all 0.25s ease;
-            cursor: pointer;
-            position: relative;
-            z-index: 1;
-        }
-
-        .timeline-node.active .node-circle {
-            background: #0f766e;
-            border-color: #115e59;
-            color: #ffffff;
-            transform: scale(1.15);
-        }
-
-        .timeline-node.active .node-text {
-            color: #115e59;
+        .title {
+            margin: 0;
+            font-size: 20px;
             font-weight: 700;
         }
-
-        .subphase-menu {
-            position: relative;
-            margin-top: 0.85rem;
-            margin-left: 0.85rem;
-            padding-left: 0.85rem;
-            border-left: 1px solid #dbe4e8;
+        .subtitle {
+            margin: 4px 0 0;
+            color: var(--muted);
+            font-size: 13px;
         }
-
-        .subphase-menu::before {
-            content: '';
-            position: absolute;
-            left: -0.3rem;
-            top: 0.2rem;
-            width: 0.45rem;
-            height: 0.45rem;
-            border-radius: 9999px;
-            background: #f8fafc;
-            border: 1px solid #cbd5e1;
-        }
-
-        .subphase-btn {
+        label {
             display: block;
-            width: 100%;
-            text-align: left;
-            padding: 0.45rem 0.2rem 0.45rem 0.55rem;
-            border-radius: 0.5rem;
-            border: 1px solid transparent;
-            background: transparent;
-            color: #64748b;
-            font-size: 0.86rem;
+            margin: 14px 0 6px;
             font-weight: 600;
-            transition: all 0.2s ease;
+            font-size: 13px;
         }
-
-        .subphase-btn:hover {
-            background: #f8fafc;
-            color: #0f766e;
-            transform: translateX(1px);
+        .input-wrap {
+            position: relative;
+            display: flex;
+            align-items: center;
         }
-
-        .subphase-btn.active {
-            border-color: #ccfbf1;
-            background: #f0fdfa;
-            color: #115e59;
+        input[type="password"], input[type="text"] {
+            width: 100%;
+            padding: 12px 44px 12px 14px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            background: #0b1220;
+            color: var(--text);
+            font-size: 15px;
+            outline: none;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
         }
-
-        .subphase-btn-label {
-            display: block;
-            line-height: 1.3;
+        input:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 4px rgba(20,184,166,0.18);
         }
-
-        .mechanism-card {
+        .toggle-btn {
+            position: absolute;
+            right: 8px;
+            background: transparent;
+            border: none;
+            color: var(--muted);
             cursor: pointer;
-            transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
-            padding: 0.28rem 0.38rem;
-            display: grid;
-            grid-template-columns: auto minmax(0, 1fr);
-            align-items: center;
-            gap: 0.4rem;
-            border-radius: 0.55rem;
-            width: 100%;
-            min-width: 0;
+            padding: 6px;
+            border-radius: 8px;
         }
-
-        .mechanism-card:hover {
-            border-color: #99f6e4;
-            background: #fcfffe;
-            box-shadow: none;
-        }
-
-        .mechanism-card.active {
-            border-color: #14b8a6;
-            background: #f8fffe;
-            box-shadow: none;
-        }
-
-        .mechanism-card-title {
-            font-size: 0.84rem;
-            font-weight: 500;
-            color: #1e293b;
-            line-height: 1.3;
-        }
-
-        .mechanism-split {
-            display: grid;
-            grid-template-columns: minmax(180px, 0.58fr) minmax(0, 1.72fr);
-            gap: 1rem;
-            align-items: start;
-        }
-
-        .mechanism-list-panel,
-        .mechanism-detail-shell {
-            border: 1px solid #e2e8f0;
-            border-radius: 1rem;
-            background: #ffffff;
-            box-shadow: 0 8px 20px rgba(15, 23, 42, 0.04);
-        }
-
-        .mechanism-list-panel {
-            padding: 0.35rem;
+        .toggle-btn:hover { color: var(--text); }
+        .actions {
+            margin-top: 18px;
             display: flex;
-            flex-direction: column;
+            gap: 10px;
         }
-
-        .mechanism-detail-shell {
-            overflow: hidden;
-            height: 100%;
-        }
-
-        .mechanism-image-slot {
-            margin-top: 0.6rem;
-            border: 1px dashed #cbd5e1;
-            border-radius: 0.8rem;
-            background: #f8fafc;
+        button {
             flex: 1;
-            min-height: 150px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 0.9rem;
-            text-align: center;
-            color: #94a3b8;
-            font-size: 0.82rem;
-            line-height: 1.5;
+            padding: 12px;
+            border-radius: 12px;
+            border: 1px solid transparent;
+            font-weight: 700;
+            cursor: pointer;
+            transition: transform 0.15s ease, box-shadow 0.2s ease, border-color 0.2s ease;
         }
-
-        .mechanism-image-slot img {
-            width: 100%;
-            max-height: 220px;
-            object-fit: contain;
-            border-radius: 0.7rem;
-            background: #ffffff;
-            cursor: zoom-in;
+        .primary {
+            background: linear-gradient(135deg, #14b8a6, #22d3ee);
+            color: #0b1220;
+            box-shadow: 0 12px 30px rgba(20,184,166,0.45);
         }
-
-        .image-lightbox {
-            position: fixed;
-            inset: 0;
-            display: none;
-            align-items: center;
-            justify-content: center;
-            padding: 2rem;
-            background: rgba(15, 23, 42, 0.74);
-            z-index: 70;
-            cursor: zoom-out;
+        .primary:hover { transform: translateY(-1px); }
+        .secondary {
+            background: transparent;
+            color: var(--muted);
+            border-color: var(--border);
         }
-
-        .image-lightbox.open {
-            display: flex;
+        .secondary:hover { color: var(--text); }
+        .hint {
+            margin-top: 12px;
+            font-size: 12px;
+            color: var(--muted);
         }
-
-        .image-lightbox img {
-            max-width: min(92vw, 1200px);
-            max-height: 88vh;
-            object-fit: contain;
-            border-radius: 1rem;
-            background: #ffffff;
-            box-shadow: 0 20px 50px rgba(15, 23, 42, 0.28);
-        }
-
-        @media (max-width: 1023px) {
-            .mechanism-split {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        .mechanism-detail-compact {
-            max-width: 880px;
-            margin: 0 auto;
-        }
-
-        .fade-in {
-            animation: fadeIn 0.35s ease-in-out;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        @media (min-width: 1024px) {
-            .dashboard-grid {
-                flex: 1;
-                min-height: 0;
-                align-items: stretch;
-            }
-
-            .phase-panel,
-            .content-column {
-                height: 100%;
-                min-height: 0;
-            }
-        }
-
-        @media (max-width: 1023px) {
-            body {
-                overflow: auto;
-            }
-
-            .app-shell {
-                height: auto;
-                overflow: visible;
-            }
-
-            .phase-panel,
-            .content-panel {
-                height: min(32rem, calc(100vh - var(--header-height) - 2rem));
-                min-height: 18rem;
-            }
+        .error { color: var(--error); margin-top: 10px; font-size: 13px; }
+        .shake { animation: shake 0.26s linear; }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-6px); }
+            75% { transform: translateX(6px); }
         }
     </style>
 </head>
-<body class="antialiased min-h-screen flex flex-col">
-    <header class="bg-white shadow-sm border-b border-slate-200 sticky top-0 z-50">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center gap-4">
+<body>
+    <div class="card" id="card">
+        <div class="header">
             <div>
-                <h1 class="text-2xl font-bold text-slate-800">💪 인공근육 Lab.</h1>
-                <p class="text-sm text-slate-500">연구 방향성 History 공유</p>
+                <p class="title">접근 비밀번호를 입력하세요</p>
+                <p class="subtitle">인공근육 Lab. 연구 대시보드</p>
             </div>
-            <div class="hidden md:flex items-center space-x-2 bg-teal-50 px-3 py-1 rounded-full text-teal-800 text-sm font-medium border border-teal-100">
-                <span>&#128161;</span>
-                <span>워크샵 방향성 공유 대시보드</span>
-            </div>
-        </div>
-    </header>
-
-    <main class="app-shell flex flex-col flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full min-h-0">
-        <div class="intro-panel mb-8 bg-white rounded-xl shadow-sm border border-slate-100" id="intro-panel">
-            <div class="intro-summary">
-                <div class="min-w-0 intro-summary-copy">
-                    <h2 class="text-xl font-bold text-slate-800">우리의 초점은 어떻게 확장되었는가?</h2>
-                    <p class="text-sm text-slate-500 mt-1">소프트 촉각센서의 강점에서 소프트 구동과 인공근육으로 확장된 배경</p>
-                </div>
-                <button class="intro-toggle" id="intro-toggle" onclick="toggleIntroPanel()" aria-label="인트로 접기/펼치기" aria-expanded="true">
-                    <span id="intro-toggle-icon">&#9650;</span>
-                </button>
-            </div>
-            <div class="intro-content" id="intro-content">
-                <div class="intro-scroll p-6 pt-4">
-                    <p class="text-slate-600 leading-relaxed">
-                        이 대시보드는 인공근육 연구 방향이 어떤 배경에서 구체화되었는지 보여드립니다.
-                        출발점은 처음부터 특정 인공근육 메커니즘을 정해 둔 상태가 아니라,
-                        <strong>소프트한 촉각센서를 구현할 수 있는 소재 역량에서 출발해 소프트 로보틱스 전체를 바라보게 된 문제의식</strong>이었습니다.
-                        엘라스토머 기반 촉각센서를 차별적으로 만들 수 있다면,
-                        그다음에는 <strong>구동 역시 소프트해야 시스템이 일관된다</strong>는 생각으로 자연스럽게 이어집니다.
-                        그 결과 감각과 구동을 함께 설계하는 소프트 로보틱스 관점이 강화되었고,
-                        인공근육 연구가 그 연장선의 두 번째 도전으로 구체화되었습니다.
-                        현재는 하나의 메커니즘으로 바로 좁히기보다, 여러 메커니즘을 펼쳐 놓고 원리와 특성을 검토하면서
-                        향후 <strong>메커니즘별 모듈을 제작하고 평가해</strong>, 휴머노이드의 각 부위에 어떤 구동 방식이 적합한지 찾아가는 방향으로 연구를 전개하고 있습니다.
-                    </p>
-                </div>
-            </div>
+            <div style="font-size:22px">🔒</div>
         </div>
 
-        <div class="dashboard-grid flex flex-col lg:flex-row gap-8 min-h-0 flex-1">
-            <aside class="phase-panel w-full lg:w-1/3 bg-white rounded-xl shadow-sm border border-slate-100">
-                <div class="phase-scroll p-6">
-                    <h3 class="text-lg font-bold mb-6 text-slate-800 border-b pb-2">Research Phases</h3>
-                    <div class="relative">
-                        <div class="timeline-line"></div>
-                        <div class="flex flex-col space-y-8">
-                            <div class="timeline-node active flex items-start" onclick="updateContent(0)">
-                                <div class="node-circle w-10 h-10 rounded-full border-4 border-slate-300 bg-white flex items-center justify-center font-bold text-slate-500 mt-1 transition-colors">1</div>
-                                <div class="ml-4">
-                                    <h4 class="node-text text-lg font-semibold text-slate-700 transition-colors">출발 배경</h4>
-                                    <p class="text-sm text-slate-500">소프트 촉각센서 경쟁력</p>
-                                </div>
-                            </div>
-
-                            <div class="timeline-node flex items-start" onclick="updateContent(1)">
-                                <div class="node-circle w-10 h-10 rounded-full border-4 border-slate-300 bg-white flex items-center justify-center font-bold text-slate-500 mt-1 transition-colors">2</div>
-                                <div class="ml-4">
-                                    <h4 class="node-text text-lg font-semibold text-slate-700 transition-colors">관점 확장</h4>
-                                    <p class="text-sm text-slate-500">소프트 센서에서 소프트 구동으로</p>
-                                </div>
-                            </div>
-
-                            <div class="timeline-node flex items-start" onclick="updateContent(2)">
-                                <div class="node-circle w-10 h-10 rounded-full border-4 border-slate-300 bg-white flex items-center justify-center font-bold text-slate-500 mt-1 transition-colors">3</div>
-                                <div class="ml-4">
-                                    <h4 class="node-text text-lg font-semibold text-slate-700 transition-colors">DRB 역량 연결</h4>
-                                    <p class="text-sm text-slate-500">소재 회사로서의 자연스러운 확장</p>
-                                </div>
-                            </div>
-
-                            <div class="timeline-node flex items-start" onclick="updateContent(3)">
-                                <div class="node-circle w-10 h-10 rounded-full border-4 border-slate-300 bg-white flex items-center justify-center font-bold text-slate-500 mt-1 transition-colors">4</div>
-                                <div class="ml-4">
-                                    <h4 class="node-text text-lg font-semibold text-slate-700 transition-colors">현재 연구 구조</h4>
-                                    <p class="text-sm text-slate-500">메커니즘 검토와 후속 개발 계획</p>
-                                    <div id="phase4-submenu" class="subphase-menu hidden space-y-2"></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </aside>
-
-            <section class="content-column w-full lg:w-2/3 flex min-h-0">
-                <div class="content-panel bg-white rounded-xl shadow-sm border border-slate-100 w-full" id="content-display">
-                    <div class="content-scroll p-6 sm:p-8">
-                        <div class="inline-block px-3 py-1 bg-teal-100 text-teal-800 rounded-full text-xs font-bold mb-4 tracking-wider uppercase" id="phase-badge">Phase 1</div>
-                        <h2 class="text-2xl font-bold text-slate-800 mb-4" id="phase-title">소프트 촉각센서의 강점에서 인공근육 가능성을 보기 시작함</h2>
-                        <div id="phase-media" class="mb-6"></div>
-                        <div class="prose max-w-none text-slate-600 mb-8" id="phase-description"></div>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8" id="takeaways-container"></div>
-                        <div class="mt-8 border-t border-slate-100 pt-6" id="summary-section">
-                            <h3 class="text-lg font-bold text-slate-800 mb-4 text-center" id="summary-title">핵심 요약</h3>
-                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4" id="summary-cards"></div>
-                        </div>
-                    </div>
-                </div>
-            </section>
+        <label for="pw-input">Password</label>
+        <div class="input-wrap">
+            <input type="password" id="pw-input" autocomplete="current-password" placeholder="비밀번호를 입력" />
+            <button type="button" class="toggle-btn" id="toggle-visibility" aria-label="비밀번호 보기">👁️</button>
         </div>
-    </main>
+        <div id="error" class="error" aria-live="polite" style="display:none">비밀번호가 올바르지 않습니다.</div>
 
-    <div id="image-lightbox" class="image-lightbox" onclick="closeImageLightbox()" aria-hidden="true">
-        <img id="image-lightbox-img" src="" alt="확대 이미지">
+        <div class="actions">
+            <button class="secondary" type="button" id="reset-btn">초기화</button>
+            <button class="primary" type="button" id="submit-btn">입장하기</button>
+        </div>
+        <div class="hint">올바른 비밀번호 입력 시 연구 대시보드(index.html)로 이동합니다.</div>
     </div>
 
     <script>
-        const phaseData = [
-            {
-                badge: 'Phase 1',
-                title: '소프트 촉각센서의 강점에서 인공근육 가능성을 보기 시작함',
-                media: `
-                    <div>
-                        <img
-                            src="images/sensor_to_muscle.png"
-                            alt="소프트 촉각센서에서 인공근육 연구로 확장되는 흐름"
-                            class="w-full rounded-lg border border-slate-200 shadow-sm"
-                        >
-                        <p class="text-xs text-slate-500 text-center mt-2">
-                            소프트 촉각센서에서 인공근육 연구로 확장되는 개념 흐름
-                        </p>
-                    </div>
-                `,
-                description: `
-                    <p>
-                        인공근육 연구의 출발선에는 먼저 <strong>촉각센서를 더 소프트하게 접근할 수 있는 DRB의 소재 역량</strong>이 있었습니다.
-                        DRB는 소재 회사로서 엘라스토머를 다루는 기술적 기반이 있기 때문에,
-                        딱딱한 센서보다 유연하고 순응적인 촉각센서를 설계하는 방향이 더 자연스러운 출발점이었습니다.
-                    </p>
-                    <p class="mt-3">
-                        이렇게 센서를 소프트하게 만들 수 있다는 강점은 연구를 단순한 센서 개발에 머무르게 하지 않았습니다.
-                        로봇이 외부를 부드럽게 감지할 수 있다면, 결국 <strong>그에 맞는 움직임도 부드럽게 구현되어야 한다</strong>는 질문으로 이어졌고,
-                        이 문제의식이 인공근육 연구의 출발점이 되었습니다.
-                    </p>
-                    <p class="mt-3 bg-slate-50 p-4 border-l-4 border-teal-600 rounded text-slate-700 italic">
-                        출발은 촉각센서였지만, 핵심은 "소프트한 감각을 만들 수 있는 소재 역량은 결국 소프트한 구동으로 이어져야 한다"는 인식이었습니다.
-                    </p>
-                `,
-                takeaways: [
-                    { title: '기존 출발점', text: '연구의 직접 출발점은 인공근육 자체가 아니라 소프트 촉각센서에 대한 소재 기반 경쟁력이었습니다.' },
-                    { title: '문제의식 전환', text: '소프트 센서를 만들 수 있다면 구동도 소프트해야 한다는 시스템 관점이 생기기 시작했습니다.' }
-                ],
-                summaryData: {
-                    title: '출발 배경',
-                    cards: [
-                        { value: '소프트 센서', label: '기존 연구 축', color: 'text-teal-700' },
-                        { value: '소재 경쟁력', label: '차별화 포인트', color: 'text-sky-700' },
-                        { value: '감각→구동', label: '확장 시작', color: 'text-amber-700' }
-                    ]
-                }
-            },
-            {
-                badge: 'Phase 2',
-                title: '소프트 촉각센서는 결국 소프트 구동과 소프트 로보틱스로 이어짐',
-                media: `
-                    <div class="rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden">
-                        <div class="p-6 bg-slate-50 border-b border-slate-100">
-                            <div class="text-sm font-semibold tracking-wide text-slate-500 uppercase">Perspective Shift</div>
-                            <h4 class="text-lg font-bold text-slate-800 mt-1">Sensor Technology → Soft Robotics</h4>
-                        </div>
-                        <div class="p-6 grid grid-cols-1 md:grid-cols-3 gap-4">
-                            <div class="p-4 rounded-xl bg-slate-50 border border-slate-200 text-center">
-                                <div class="font-bold text-slate-700">소프트 촉각센서</div>
-                                <div class="text-sm text-slate-500 mt-2">유연한 환경 인식</div>
-                            </div>
-                            <div class="p-4 rounded-xl bg-slate-50 border border-slate-200 text-center">
-                                <div class="font-bold text-slate-700">소프트 로보틱스</div>
-                                <div class="text-sm text-slate-500 mt-2">감각 + 구동의 일관성</div>
-                            </div>
-                            <div class="p-4 rounded-xl bg-slate-50 border border-slate-200 text-center">
-                                <div class="font-bold text-slate-700">인공근육</div>
-                                <div class="text-sm text-slate-500 mt-2">소프트 구동 구현</div>
-                            </div>
-                        </div>
-                        <div class="px-6 pb-6">
-                            <img
-                                src="images/tactile_to_movement.png"
-                                alt="소프트 촉각센서에서 소프트 구동으로 확장되는 개념 흐름"
-                                class="w-full rounded-xl border border-slate-200 bg-white"
-                            >
-                        </div>
-                    </div>
-                `,
-                description: `
-                    <p>
-                        소프트한 촉각센서가 실제로 의미를 가지려면 로봇 시스템 안에서 작동해야 합니다.
-                        이 과정에서 연구 관점은 자연스럽게 <strong>소프트 로보틱스</strong>로 확장되었습니다.
-                    </p>
-                    <p class="mt-3">
-                        핵심은 센서만 소프트해서는 충분하지 않다는 점입니다.
-                        감각부가 부드럽게 환경과 상호작용하더라도 구동부가 기존의 딱딱한 모터와 구조에 머무르면,
-                        시스템 전체의 특성은 일관되게 유지되기 어렵습니다.
-                    </p>
-                    <p class="mt-3">
-                        소프트 로보틱스는 유연 소재를 기반으로 감각과 구동을 함께 설계하는 분야이며,
-                        촉각센서와 인공근육은 각각 <strong>감각과 구동을 담당하는 핵심 요소기술</strong>입니다.
-                        따라서 인공근육 연구는 완전히 새로운 주제를 추가한 것이 아니라,
-                        <strong>소프트 센서의 경쟁력을 시스템 차원에서 완성하기 위한 소프트 구동 연구</strong>로 이해하는 편이 더 정확합니다.
-                    </p>
-                `,
-                takeaways: [
-                    { title: '관점 변화', text: '센서 단품 관점에서 감각과 구동을 함께 보는 소프트 로봇 시스템 관점으로 연구 시야가 넓어졌습니다.' },
-                    { title: '기술적 연결', text: '소프트 촉각센서는 감각, 인공근육은 구동을 맡으며 시스템 일관성을 함께 구성합니다.' }
-                ],
-                summaryData: {
-                    title: '관점 확장',
-                    cards: [
-                        { value: '소프트 센서', label: '출발점', color: 'text-teal-700' },
-                        { value: '소프트 구동', label: '필요 조건', color: 'text-sky-700' },
-                        { value: '소프트 로봇', label: '최종 연결축', color: 'text-indigo-700' }
-                    ]
-                }
-            },
-            {
-                badge: 'Phase 3',
-                title: 'DRB의 소재 역량은 인공근육을 자연스러운 다음 단계로 만듦',
-                media: `
-                    <div class="rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden">
-                        <div class="px-5 py-4 border-b border-slate-100 bg-slate-50">
-                            <div class="text-sm font-semibold tracking-wide text-slate-500 uppercase">DRB Connection</div>
-                            <h4 class="text-lg font-bold text-slate-800 mt-1">DRB의 소재 역량이 왜 인공근육으로 이어지는가</h4>
-                        </div>
-                        <div class="p-5 md:p-6">
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div class="p-5 border border-slate-200 bg-slate-50 rounded-xl shadow-sm">
-                                    <h4 class="font-bold text-slate-800">소재 기술 기반</h4>
-                                    <p class="text-sm text-slate-600 mt-3 leading-6">소재 합성과 엘라스토머 가공·적용 역량을 바탕으로, 반복 변형이 가능한 소프트 구동 구조로 자연스럽게 확장할 수 있는 기반을 보유</p>
-                                </div>
-                                <div class="p-5 border border-slate-200 bg-slate-50 rounded-xl shadow-sm">
-                                    <h4 class="font-bold text-slate-800">CNTF 연결 가능성</h4>
-                                    <p class="text-sm text-slate-600 mt-3 leading-6">CNTF는 아직 초기 단계이지만 전열 구동형 또는 섬유 기반 인공근육으로 이어질 수 있는 후보 축으로 검토 중</p>
-                                </div>
-                            </div>
-                            <div class="mt-5">
-                                <img
-                                    src="images/drb_cntf_elastomer.png"
-                                    alt="DRB 소재 역량과 CNTF 연구 연결 가능성 개념도"
-                                    class="w-full rounded-xl border border-slate-200 bg-white"
-                                >
-                            </div>
-                        </div>
-                    </div>
-                `,
-                description: `
-                    <p>
-                        인공근육 연구를 검토하게 된 또 다른 이유는,
-                        이 주제가 DRB의 기존 기술자산과 비교적 직접적으로 연결될 수 있기 때문입니다.
-                        DRB는 소재 합성과 엘라스토머 가공·적용 측면에서 축적된 역량이 있으며,
-                        유연하고 반복 변형이 가능한 구조를 설계·제조하는 데 강점을 가지고 있습니다.
-                    </p>
-                    <p class="mt-3">
-                        특히 이 역량은 단지 "관련이 있다"는 수준이 아니라,
-                        소프트 센서에서 소프트 구동으로 확장되는 흐름 속에서 <strong>인공근육이 DRB에게 자연스러운 다음 단계</strong>가 되게 만듭니다.
-                        고분자 기반 인공근육은 구조를 비교적 단순하게 가져갈 수 있고,
-                        경량화와 유연한 상호작용 측면에서 장점이 있어 DRB의 소재 역량과 더 잘 맞닿아 있습니다.
-                    </p>
-                    <p class="mt-3">
-                        이러한 넓은 소재 역량 안에서,
-                        현재 본격적으로 연구를 진행하고 있는 <strong>CNTF(Carbon Nanotube Fiber, 탄소나노튜브 섬유)</strong> 역시 하나의 가능성으로 보고 있습니다.
-                        CNTF는 전기전도성, 기계적 특성, 경량성 측면에서 전열 구동형 인공근육이나 섬유 기반 인공근육 구조와 연결 가능성이 있지만,
-                        아직 물성 안정화와 공정 측면에서 초기 검토 단계에 있습니다.
-                    </p>
-                `,
-                takeaways: [],
-                summaryData: {
-                    title: 'DRB 역량 연결',
-                    cards: [
-                        { value: '소재 합성', label: '기술 기반', color: 'text-teal-700' },
-                        { value: '엘라스토머', label: '핵심 강점', color: 'text-sky-700' },
-                        { value: '인공근육', label: '자연스러운 확장', color: 'text-amber-700' }
-                    ]
-                }
-            },
-            {
-                badge: 'Phase 4',
-                title: '현재 인공근육 연구는 병렬 검토와 후속 개발 계획 단계에 있음',
-                media: `
-                    <div class="rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden">
-                        <div class="px-5 py-4 border-b border-slate-100 bg-slate-50">
-                            <div class="text-sm font-semibold tracking-wide text-slate-500 uppercase">Current Research Structure</div>
-                            <h4 class="text-lg font-bold text-slate-800 mt-1">현재 연구는 두 가지 축으로 진행되고 있습니다</h4>
-                            <p class="text-sm text-slate-500 mt-2">현재는 메커니즘을 병렬 검토하고, 이후 모듈 제작과 적용 평가로 이어가려는 구조입니다.</p>
-                        </div>
-                        <div class="p-5 md:p-6 grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div class="p-5 border border-slate-200 bg-slate-50 rounded-xl shadow-sm">
-                                <div class="text-xs font-semibold tracking-wide uppercase text-slate-500">Track 1</div>
-                                <h5 class="font-bold text-slate-800 mt-2">메커니즘 검토</h5>
-                                <p class="text-sm text-slate-600 mt-3 leading-6">여러 구동 메커니즘의 원리, 장단점, 해결 과제를 비교하며 후보군을 넓게 검토합니다.</p>
-                            </div>
-                            <div class="p-5 border border-slate-200 bg-slate-50 rounded-xl shadow-sm">
-                                <div class="text-xs font-semibold tracking-wide uppercase text-slate-500">Track 2</div>
-                                <h5 class="font-bold text-slate-800 mt-2">모듈 제작 및 적용</h5>
-                                <p class="text-sm text-slate-600 mt-3 leading-6">향후 메커니즘별 모듈을 제작하고 평가해 휴머노이드 각 부위에 맞는 적용 방향을 탐색할 계획입니다.</p>
-                            </div>
-                        </div>
-                    </div>
-                `,
-                description: `
-                    <p>
-                        현재 인공근육 연구는 하나의 메커니즘으로 바로 좁혀진 상태가 아니라,
-                        후보 메커니즘을 병렬적으로 검토하는 단계에 있습니다.
-                    </p>
-                    <p class="mt-3">
-                        다시 말해, 현재 연구의 핵심은 먼저 어떤 메커니즘이 어떤 특성을 가지는지 비교하는 것이며,
-                        이후 실제 모듈을 제작해 성능을 평가하면서 적용 가능성을 구체화하는 방향으로 이어질 예정입니다.
-                    </p>
-                `,
-                takeaways: [
-                    { title: '현재 단계', text: '여러 메커니즘을 병렬적으로 검토하면서 방향을 구체화하고 있습니다.' },
-                    { title: '후속 계획', text: '이후 메커니즘별 모듈 제작과 적용 평가로 이어가는 구조를 구상하고 있습니다.' }
-                ],
-                summaryData: {
-                    title: '현재 연구 개요',
-                    cards: [
-                        { value: '메커니즘 검토', label: '병렬 연구', color: 'text-teal-700' },
-                        { value: '모듈 제작', label: '다음 단계', color: 'text-sky-700' },
-                        { value: '휴머노이드 적용', label: '부위별', color: 'text-indigo-700' }
-                    ]
-                },
-                subSections: [
-                    {
-                        label: '메커니즘 검토',
-                        description: `
-                            <p>
-                                현재 인공근육 연구는 하나의 메커니즘으로 바로 좁혀진 상태가 아니라,
-                                여러 메커니즘을 펼쳐 놓고 원리와 특성을 비교하며 <strong>병렬적으로 검토하는 단계</strong>에 가깝습니다.
-                            </p>
-                            <div class="mt-5 mechanism-split">
-                                <div class="mechanism-list-panel space-y-2.5">
-                                    <div class="mechanism-card border border-slate-200 bg-white rounded-xl shadow-sm" onclick="updateMechanismDetail(0)">
-                                        <span class="inline-flex items-center justify-center w-5.5 h-5.5 rounded-full bg-teal-50 text-teal-700 text-[10px] font-semibold border border-teal-100">01</span>
-                                        <div class="mechanism-card-title">전기화학식 인공근육</div>
-                                    </div>
-                                    <div class="mechanism-card border border-slate-200 bg-white rounded-xl shadow-sm" onclick="updateMechanismDetail(1)">
-                                        <span class="inline-flex items-center justify-center w-5.5 h-5.5 rounded-full bg-teal-50 text-teal-700 text-[10px] font-semibold border border-teal-100">02</span>
-                                        <div class="mechanism-card-title">전열(폴리머) 구동</div>
-                                    </div>
-                                    <div class="mechanism-card border border-slate-200 bg-white rounded-xl shadow-sm" onclick="updateMechanismDetail(2)">
-                                        <span class="inline-flex items-center justify-center w-5.5 h-5.5 rounded-full bg-teal-50 text-teal-700 text-[10px] font-semibold border border-teal-100">03</span>
-                                        <div class="mechanism-card-title">전열(LCE) 구동</div>
-                                    </div>
-                                    <div class="mechanism-card border border-slate-200 bg-white rounded-xl shadow-sm" onclick="updateMechanismDetail(3)">
-                                        <span class="inline-flex items-center justify-center w-5.5 h-5.5 rounded-full bg-teal-50 text-teal-700 text-[10px] font-semibold border border-teal-100">04</span>
-                                        <div class="mechanism-card-title">전기장(DEA) 방식</div>
-                                    </div>
-                                    <div id="mechanism-image-slot" class="mechanism-image-slot">
-                                        메커니즘별 이미지 또는 도식 자리
-                                    </div>
-                                </div>
-                                <div id="mechanism-detail-panel" class="mechanism-detail-shell"></div>
-                            </div>
-                        `,
-                        mechanismDetails: [
-                            {
-                                badge: '01',
-                                name: '전기화학식 인공근육',
-                                english: 'Electrochemical',
-                                imageHtml: '<img src="images/electrochemical_mecha.jpg" alt="전기화학 방식 인공근육 메커니즘 이미지">',
-                                summary: '낮은 전압에서 큰 변형을 낼 수 있어 소프트 구동 관점에서 매력적이지만, 반응속도와 내구성 확보가 핵심 과제입니다.',
-                                blocks: [
-                                    { title: '원리', text: '이온 이동과 전기화학 반응에 의해 재료가 팽창하거나 수축하면서 구동을 만듭니다.' },
-                                    { title: '왜 검토하는가', text: '저전압 구동 가능성과 비교적 큰 변형 특성 때문에 소프트 액추에이션 후보로 볼 수 있습니다.' },
-                                    { title: '현재 보는 한계', text: '응답속도가 느리고 반복 구동 시 내구성이 떨어질 수 있어 실제 시스템 적용에는 부담이 있습니다.' },
-                                    { title: '주요 연구 과제', text: '이온 확산 속도 개선, 전해질 안정화, 밀봉 구조 설계가 중요합니다.' }
-                                ]
-                            },
-                            {
-                                badge: '02',
-                                name: '전열(폴리머) 구동',
-                                english: 'Thermal Polymer',
-                                imageHtml: '<img src="images/heated_polymer_final.png" alt="전열 구동 방식 고분자 인공근육 이미지">',
-                                summary: '구조가 단순하고 큰 출력을 기대할 수 있어 현실적인 후보이지만, 발열과 냉각을 어떻게 다룰지가 가장 중요합니다.',
-                                blocks: [
-                                    { title: '원리', text: '전기 자극으로 발생한 열이 고분자 구조 변형을 유도하면서 수축 또는 팽창 구동을 만듭니다.' },
-                                    { title: '왜 검토하는가', text: '구조가 비교적 단순하고 시스템 설계가 직관적이어서 초기 구현 관점에서 접근성이 있습니다.' },
-                                    { title: '현재 보는 한계', text: '발열 제어가 어렵고 반복 구동 시 열 축적과 내구성 저하가 발생할 수 있습니다.' },
-                                    { title: '주요 연구 과제', text: '냉각 속도 개선, 열 효율 향상, 반복 구동 안정성 확보가 필요합니다.' }
-                                ]
-                            },
-                            {
-                                badge: '03',
-                                name: '전열(LCE) 구동',
-                                english: 'Thermal LCE',
-                                imageHtml: '<img src="images/lce2.jpg" alt="전열 LCE 구동 메커니즘 이미지">',
-                                summary: '방향성 있는 변형과 큰 변형률이 강점이지만, 열 제어와 반복 안정성 측면에서 검토가 더 필요합니다.',
-                                blocks: [
-                                    { title: '원리', text: '열에 의해 액정 배향이 변하면서 방향성 있는 수축과 변형이 발생합니다.' },
-                                    { title: '왜 검토하는가', text: '정교한 변형 제어 가능성과 큰 변형률 때문에 특정 구동 부위에 적합할 가능성이 있습니다.' },
-                                    { title: '현재 보는 한계', text: '발열 제어가 쉽지 않고, 반복 변형 과정에서 안정성과 수명 문제가 남아 있습니다.' },
-                                    { title: '주요 연구 과제', text: '열 응답 최적화, 반복 내구성 확보, 안정적인 구조 설계가 필요합니다.' }
-                                ]
-                            },
-                            {
-                                badge: '04',
-                                name: '전기장(DEA) 방식',
-                                english: 'DEA',
-                                imageHtml: '<img src="images/DEA_modified_mechanism.png" alt="전기장 DEA 방식 메커니즘 도식">',
-                                summary: '빠른 응답과 큰 변형률이 장점이지만, 고전압 요구와 절연 신뢰성이 가장 큰 진입장벽입니다.',
-                                blocks: [
-                                    { title: '원리', text: '전기장이 유전체 엘라스토머를 두께 방향으로 압축하고 면내 방향으로 팽창시키며 구동을 만듭니다.' },
-                                    { title: '왜 검토하는가', text: '응답성이 빠르고 변형률이 커서 민첩한 소프트 구동 가능성을 기대할 수 있습니다.' },
-                                    { title: '현재 보는 한계', text: 'kV급 고전압이 필요하고 절연 파괴 위험이 있어 시스템 안정성 확보가 어렵습니다.' },
-                                    { title: '주요 연구 과제', text: '고전압 안정성, 절연 신뢰성, 반복 내구성 확보가 핵심입니다.' }
-                                ]
-                            }
-                        ],
-                        takeaways: [
-                            { title: '현재 단계', text: '특정 메커니즘 하나로 확정하기보다 후보별 원리와 성능을 병렬적으로 검토하고 있습니다.' },
-                            { title: '판단 기준', text: '변형률뿐 아니라 응답성, 내구성, 발열 관리, 고전압 안정성까지 함께 검토하고 있습니다.' }
-                        ],
-                        summaryData: {
-                            title: '메커니즘 검토',
-                            cards: [
-                                { value: '병렬 검토', label: '연구 방식', color: 'text-teal-700' },
-                                { value: '장단점 비교', label: '현재 활동', color: 'text-sky-700' },
-                                { value: '후보 확장', label: '검토 범위', color: 'text-indigo-700' }
-                            ]
-                        }
-                    },
-                    {
-                        label: '모듈 제작 및 적용',
-                        description: `
-                            <p>
-                                현재 단계에서는 아직 실제 모듈 제작과 적용 평가까지 진행한 상태는 아닙니다.
-                                다만 메커니즘 검토 이후에는 모듈 수준에서 성능을 확인하고 적용 가능성을 평가하는 방향으로 이어갈 계획입니다.
-                            </p>
-                            <div class="mt-5 grid grid-cols-1 md:grid-cols-3 gap-4">
-                                <div class="p-5 border border-teal-200 bg-gradient-to-br from-teal-50 to-white rounded-xl shadow-sm text-center">
-                                    <div class="text-xs font-semibold tracking-wide uppercase text-teal-700">Step 1</div>
-                                    <h4 class="font-bold text-teal-900 mt-2">모듈 제작</h4>
-                                    <p class="text-sm text-slate-700 mt-3 leading-6">후보 메커니즘별로 구동 모듈을 만들고 기본 성능을 확인할 계획</p>
-                                </div>
-                                <div class="p-5 border border-sky-200 bg-gradient-to-br from-sky-50 to-white rounded-xl shadow-sm text-center">
-                                    <div class="text-xs font-semibold tracking-wide uppercase text-sky-700">Step 2</div>
-                                    <h4 class="font-bold text-sky-900 mt-2">평가와 디벨롭</h4>
-                                    <p class="text-sm text-slate-700 mt-3 leading-6">응답성, 힘, 변형률, 내구성 등 메커니즘별 특성을 비교 평가할 계획</p>
-                                </div>
-                                <div class="p-5 border border-amber-200 bg-gradient-to-br from-amber-50 to-white rounded-xl shadow-sm text-center">
-                                    <div class="text-xs font-semibold tracking-wide uppercase text-amber-700">Step 3</div>
-                                    <h4 class="font-bold text-amber-900 mt-2">적용 부위 탐색</h4>
-                                    <p class="text-sm text-slate-700 mt-3 leading-6">휴머노이드 각 부위에 적합한 메커니즘을 찾아 실제 적용 가능성을 검토할 계획</p>
-                                </div>
-                            </div>
-                            <p class="mt-5">
-                                보다 구체적으로는 휴머노이드의 손가락, 팔, 목, 얼굴, 몸통 등 부위마다
-                                요구되는 힘, 변형률, 응답속도, 내구성이 다르기 때문에,
-                                하나의 메커니즘으로 전체를 설명하기보다 <strong>메커니즘별 특성에 맞는 적용 부위</strong>를 찾는 접근이 필요합니다.
-                            </p>
-                            <div class="mt-5 rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden">
-                                <div class="px-5 py-4 border-b border-slate-100 bg-slate-50">
-                                    <div class="text-sm font-semibold tracking-wide text-slate-500 uppercase">Application Mapping</div>
-                                    <h4 class="text-lg font-bold text-slate-800 mt-1">메커니즘별 모듈 제작과 적용 부위 탐색 구상</h4>
-                                </div>
-                                <div class="p-5">
-                                    <img
-                                        src="images/AM_module_application.png"
-                                        alt="인공근육 메커니즘별 모듈 제작 및 적용 부위 탐색 개념도"
-                                        class="w-full rounded-xl border border-slate-200 bg-white"
-                                    >
-                                    <p class="text-xs text-slate-500 text-center mt-3">
-                                        메커니즘별 모듈을 제작하고 평가한 뒤, 휴머노이드 각 부위에 적합한 적용 방향을 탐색하는 구상
-                                    </p>
-                                </div>
-                            </div>
-                        `,
-                        takeaways: [
-                            { title: '후속 개발', text: '메커니즘 검토 이후에는 메커니즘별 모듈 제작과 성능 평가로 이어갈 계획입니다.' },
-                            { title: '적용 전략', text: '휴머노이드 각 부위의 요구 특성에 맞춰 메커니즘별 적절한 적용 부위를 찾아갈 계획입니다.' }
-                        ],
-                        summaryData: {
-                            title: '모듈 및 적용 전략',
-                            cards: [
-                                { value: '모듈 계획', label: '개발 방식', color: 'text-teal-700' },
-                                { value: '평가 계획', label: '후속 활동', color: 'text-sky-700' },
-                                { value: '부위 매칭', label: '적용 목표', color: 'text-indigo-700' }
-                            ]
-                        }
-                    }
-                ]
-            }
-        ];
+        const PASSWORD = 'drb@1234';
+        const input = document.getElementById('pw-input');
+        const errorBox = document.getElementById('error');
+        const card = document.getElementById('card');
 
-        let currentPhase = 0;
-        let currentSubSection = 0;
-        let currentMechanismDetail = 0;
-
-        function renderTakeaways(takeaways) {
-            document.getElementById('takeaways-container').innerHTML = takeaways.map((item) => `
-                <div class="bg-slate-50 p-4 rounded-lg border border-slate-200">
-                    <h4 class="font-bold text-slate-700 mb-2">${item.title}</h4>
-                    <p class="text-sm text-slate-600">${item.text}</p>
-                </div>
-            `).join('');
-        }
-
-        function renderSummary(summaryData) {
-            document.getElementById('summary-title').innerText = summaryData.title;
-            document.getElementById('summary-cards').innerHTML = summaryData.cards.map((card) => `
-                <div class="bg-slate-50 p-4 rounded-lg border border-slate-200 text-center">
-                    <div class="text-2xl font-bold ${card.color}">${card.value}</div>
-                    <div class="text-sm text-slate-600 mt-1">${card.label}</div>
-                </div>
-            `).join('');
-        }
-
-        function toggleIntroPanel() {
-            const introPanel = document.getElementById('intro-panel');
-            const introToggle = document.getElementById('intro-toggle');
-            const introIcon = document.getElementById('intro-toggle-icon');
-            const isCollapsed = introPanel.classList.toggle('collapsed');
-
-            introToggle.setAttribute('aria-expanded', String(!isCollapsed));
-            introIcon.innerHTML = isCollapsed ? '&#9660;' : '&#9650;';
-        }
-
-        function openImageLightbox(src, alt) {
-            const lightbox = document.getElementById('image-lightbox');
-            const lightboxImg = document.getElementById('image-lightbox-img');
-            lightboxImg.src = src;
-            lightboxImg.alt = alt || '확대 이미지';
-            lightbox.classList.add('open');
-            lightbox.setAttribute('aria-hidden', 'false');
-        }
-
-        function closeImageLightbox() {
-            const lightbox = document.getElementById('image-lightbox');
-            const lightboxImg = document.getElementById('image-lightbox-img');
-            lightbox.classList.remove('open');
-            lightbox.setAttribute('aria-hidden', 'true');
-            lightboxImg.src = '';
-        }
-
-        function updateMechanismDetail(index) {
-            const data = phaseData[currentPhase];
-            const sub = data.subSections?.[currentSubSection];
-            if (!sub || !sub.mechanismDetails) return;
-
-            currentMechanismDetail = index;
-            const detail = sub.mechanismDetails[index];
-            const panel = document.getElementById('mechanism-detail-panel');
-            if (!panel) return;
-
-            document.querySelectorAll('.mechanism-card').forEach((card, idx) => {
-                card.classList.toggle('active', idx === index);
-            });
-
-            const imageSlot = document.getElementById('mechanism-image-slot');
-            if (imageSlot) {
-                imageSlot.innerHTML = detail.imageHtml || '메커니즘별 이미지 또는 도식 자리';
-                const slotImage = imageSlot.querySelector('img');
-                if (slotImage) {
-                    slotImage.addEventListener('click', (event) => {
-                        event.stopPropagation();
-                        openImageLightbox(slotImage.src, slotImage.alt);
-                    });
-                }
-            }
-
-            panel.innerHTML = `
-                <div class="mechanism-detail-compact bg-white overflow-hidden">
-                    <div class="px-4 py-3 border-b border-slate-100 bg-slate-50 flex items-center justify-between gap-3">
-                        <div class="min-w-0">
-                            <div class="text-[11px] font-semibold tracking-wide uppercase text-slate-500">${detail.english}</div>
-                            <h4 class="text-base font-bold text-slate-800 mt-1">${detail.name}</h4>
-                        </div>
-                        <span class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-teal-50 text-teal-700 text-xs font-bold border border-teal-100">${detail.badge}</span>
-                    </div>
-                    <div class="p-4 md:p-5">
-                        <div class="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3">
-                            <div class="text-[11px] font-semibold tracking-wide uppercase text-slate-500">Quick View</div>
-                            <p class="text-sm leading-6 text-slate-700 mt-1">${detail.summary}</p>
-                        </div>
-                        <div class="mt-4 grid grid-cols-1 md:grid-cols-2 gap-3">
-                            ${detail.blocks.map((block) => `
-                                <div class="p-3 border border-slate-200 bg-white rounded-xl">
-                                    <div class="text-xs font-semibold tracking-wide uppercase text-slate-500">${block.title}</div>
-                                    <p class="text-sm text-slate-700 leading-6 mt-1.5">${block.text}</p>
-                                </div>
-                            `).join('')}
-                        </div>
-                    </div>
-                </div>
-            `;
-        }
-
-        function updateSubSection(index) {
-            const data = phaseData[currentPhase];
-            if (!data.subSections) return;
-
-            currentSubSection = index;
-            const sub = data.subSections[index];
-            document.getElementById('phase-media').innerHTML = '';
-
-            document.querySelectorAll('#phase4-submenu button').forEach((button, idx) => {
-                if (idx === index) {
-                    button.className = 'subphase-btn active';
-                } else {
-                    button.className = 'subphase-btn';
-                }
-            });
-
-            document.getElementById('phase-description').innerHTML = sub.description;
-            renderTakeaways(sub.takeaways);
-            renderSummary(sub.summaryData);
-
-            if (sub.mechanismDetails) {
-                updateMechanismDetail(0);
-            }
-        }
-
-        function updateContent(index) {
-            currentPhase = index;
-            currentSubSection = -1;
-            const data = phaseData[index];
-
-            document.querySelectorAll('.timeline-node').forEach((node, idx) => {
-                node.classList.toggle('active', idx === index);
-            });
-
-            const contentDisplay = document.getElementById('content-display');
-            contentDisplay.classList.remove('fade-in');
-            void contentDisplay.offsetWidth;
-            contentDisplay.classList.add('fade-in');
-            contentDisplay.querySelector('.content-scroll').scrollTop = 0;
-
-            document.getElementById('phase-badge').innerHTML = data.badge;
-            document.getElementById('phase-title').innerHTML = data.title;
-            document.getElementById('phase-media').innerHTML = data.media;
-
-            const sidebarSubmenu = document.getElementById('phase4-submenu');
-            sidebarSubmenu.classList.add('hidden');
-            sidebarSubmenu.innerHTML = '';
-
-            if (data.subSections) {
-                sidebarSubmenu.classList.remove('hidden');
-                sidebarSubmenu.innerHTML = data.subSections.map((sub, idx) => `
-                    <button class="subphase-btn" onclick="event.stopPropagation(); updateSubSection(${idx})">
-                        <span class="subphase-btn-label">${sub.label}</span>
-                    </button>
-                `).join('');
-                document.querySelectorAll('#phase4-submenu button').forEach((button) => {
-                    button.className = 'subphase-btn';
-                });
-                document.getElementById('phase-media').innerHTML = data.media;
-                document.getElementById('phase-description').innerHTML = data.description;
-                renderTakeaways(data.takeaways);
-                renderSummary(data.summaryData);
+        function trySubmit() {
+            const value = (input.value || '').trim();
+            if (value === PASSWORD) {
+                sessionStorage.setItem('am_pw_verified', '1');
+                window.location.href = 'index.html';
                 return;
             }
-
-            document.getElementById('phase-description').innerHTML = data.description;
-            renderTakeaways(data.takeaways);
-            renderSummary(data.summaryData);
+            errorBox.style.display = 'block';
+            card.classList.remove('shake');
+            void card.offsetWidth; // trigger reflow for animation restart
+            card.classList.add('shake');
+            input.focus();
         }
 
-        window.addEventListener('DOMContentLoaded', () => {
-            updateContent(0);
-            document.addEventListener('keydown', (event) => {
-                if (event.key === 'Escape') {
-                    closeImageLightbox();
-                }
-            });
+        document.getElementById('submit-btn').addEventListener('click', trySubmit);
+        document.getElementById('reset-btn').addEventListener('click', () => {
+            input.value = '';
+            errorBox.style.display = 'none';
+            input.focus();
         });
+        document.getElementById('toggle-visibility').addEventListener('click', () => {
+            const isPassword = input.type === 'password';
+            input.type = isPassword ? 'text' : 'password';
+        });
+        input.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                trySubmit();
+            }
+        });
+
+        // 바로 이전 세션에서 인증한 경우 자동 이동
+        if (sessionStorage.getItem('am_pw_verified') === '1') {
+            window.location.href = 'index.html';
+        }
     </script>
 </body>
 </html>
